@@ -1,7 +1,9 @@
 #include "SnakeController.hpp"
+#include "SnakeSegments.hpp"
 
 #include <algorithm>
 #include <sstream>
+#include <memory>
 
 #include "EventT.hpp"
 #include "IPort.hpp"
@@ -56,6 +58,7 @@ Controller::Controller(IPort& p_displayPort, IPort& p_foodPort, IPort& p_scorePo
             Segment seg;
             istr >> seg.x >> seg.y;
             m_segments.push_back(seg);
+           // SnakeSegments::addToEndElementToSnake(seg);
         }
     } else {
         throw ConfigurationError();
@@ -121,7 +124,9 @@ bool perpendicular(Direction dir1, Direction dir2)
 
 Controller::Segment Controller::calculateNewHead() const
 {
-    Segment const& currentHead = m_segments.front();
+     Segment const& currentHead = m_segments.front();
+
+   // Segment const& currentHead = SnakeSegments::returnFirstElementOfList();
 
     Segment newHead;
     newHead.x = currentHead.x + (isHorizontal(m_currentDirection) ? isPositive(m_currentDirection) ? 1 : -1 : 0);
@@ -141,11 +146,14 @@ void Controller::removeTailSegment()
     m_displayPort.send(std::make_unique<EventT<DisplayInd>>(l_evt));
 
     m_segments.pop_back();
+    //SnakeSegments::removeElementFromSnake();
 }
 
 void Controller::addHeadSegment(Segment const& newHead)
 {
     m_segments.push_front(newHead);
+    //SnakeSegments::addToFrontElementToSnake(newHead);
+
 
     DisplayInd placeNewHead;
     placeNewHead.x = newHead.x;
